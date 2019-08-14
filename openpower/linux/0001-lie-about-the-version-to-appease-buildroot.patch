@@ -1,0 +1,24 @@
+From 0b70e1d236b59b215c7d39d17c58a3427ec49d1d Mon Sep 17 00:00:00 2001
+From: Eric Richter <erichte@linux.ibm.com>
+Date: Wed, 14 Aug 2019 12:48:14 -0500
+Subject: [PATCH] lie about the version to appease buildroot
+
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index fa0fbe7851ea..d79245cc765b 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,6 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0
+ VERSION = 5
+-PATCHLEVEL = 3
++PATCHLEVEL = 2
+ SUBLEVEL = 0
+ EXTRAVERSION = -rc2
+ NAME = Bobtail Squid
+-- 
+2.20.1
+
