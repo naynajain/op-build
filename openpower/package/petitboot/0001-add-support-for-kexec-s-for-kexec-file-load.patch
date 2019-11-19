@@ -1,0 +1,279 @@
+Return-Path: <petitboot-bounces+erichte=linux.vnet.ibm.com@lists.ozlabs.org>
+Received: from g01zcilapp002.ahe.pok.ibm.com ([unix socket])
+	 by g01zcilapp002 (Cyrus v2.3.11) with LMTPA;
+	 Tue, 29 Oct 2019 05:26:37 -0400
+X-Sieve: CMU Sieve 2.3
+Received: from localhost (localhost [127.0.0.1])
+	by g01zcilapp002.ahe.pok.ibm.com (Postfix) with ESMTP id EB72426260
+	for <erichte@imap.linux.ibm.com>; Tue, 29 Oct 2019 05:26:37 -0400 (EDT)
+X-Virus-Scanned: amavisd-new at linux.ibm.com
+X-Spam-Flag: NO
+X-Spam-Score: 0.274
+X-Spam-Level:
+X-Spam-Status: No, score=0.274 tagged_above=-9999 required=6.2
+	tests=[MAILING_LIST_MULTI=-1, RDNS_NONE=1.274] autolearn=disabled
+Received: from g01zcilapp002.ahe.pok.ibm.com ([127.0.0.1])
+	by localhost (g01zcilapp002.ahe.pok.ibm.com [127.0.0.1]) (amavisd-new, port 10024)
+	with LMTP id rGTrbcfzKwp7 for <erichte@imap.linux.ibm.com>;
+	Tue, 29 Oct 2019 05:26:37 -0400 (EDT)
+Received: from g01zcilapp001.ahe.pok.ibm.com (g01zcilapp001.ahe.pok.ibm.com [9.63.16.68])
+	by g01zcilapp002.ahe.pok.ibm.com (Postfix) with ESMTP id A07352625B
+	for <erichte@imap.linux.ibm.com>; Tue, 29 Oct 2019 05:26:37 -0400 (EDT)
+Received: from VMSDVM9.POK.IBM.COM (vmsdvm9.pok.ibm.com [9.63.66.64])
+	by g01zcilapp001.ahe.pok.ibm.com (Postfix) with ESMTP id 9DC5113E002
+	for <erichte@linux.ibm.com>; Tue, 29 Oct 2019 05:26:37 -0400 (EDT)
+Received:  by VMSDVM9.POK.IBM.COM (IBM VM SMTP Level 640) via spool with SMTP id 6530 ; Tue, 29 Oct 2019 02:26:37 PDT
+Received: by vmsdvm9.vnet.ibm.com (xagsmtp 2.1.4) via smtp2 with spool id
+ 0384; Tue, 29 Oct 2019 02:26:37 -0700
+Received: from b03cxnp08028.gho.boulder.ibm.com [9.17.130.20] by
+ VMSDVM9.POK.IBM.COM (IBM VM SMTP Level 640) via TCP with ESMTP ; Tue, 29 Oct
+ 2019 02:26:37 PDT
+Received: from b03ledav002.gho.boulder.ibm.com
+ (b03ledav002.gho.boulder.ibm.com [9.17.130.233])	by
+ b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id
+ x9T9QaL448890162	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384
+ bits=256 verify=OK)	for <erichte@linux.vnet.ibm.com>; Tue, 29 Oct 2019
+ 09:26:36 GMT
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])	by IMSVA
+ (Postfix) with ESMTP id C0533136059	for <erichte@linux.vnet.ibm.com>; Tue, 29
+ Oct 2019 09:26:36 +0000 (GMT)
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])	by IMSVA
+ (Postfix) with ESMTP id 8C79F136055	for <erichte@linux.vnet.ibm.com>; Tue, 29
+ Oct 2019 09:26:36 +0000 (GMT)
+Received: from ppma03wdc.us.ibm.com (unknown [9.209.240.184])	by
+ b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTPS	for
+ <erichte@linux.vnet.ibm.com>; Tue, 29 Oct 2019 09:26:36 +0000 (GMT)
+Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])	by
+ ppma03wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x9T9Pmcm028841	for
+ <erichte@linux.vnet.ibm.com>; Tue, 29 Oct 2019 09:26:35 GMT
+Authentication-Results: us.ibm.com;	spf=temperror
+ smtp.mailfrom=petitboot-bounces+erichte=linux.vnet.ibm.com@lists.ozlabs.org;
+ dkim=fail header.d=ozlabs.org header.s=201707;	dmarc=none
+ header.from=ozlabs.org
+Received: from mx0a-001b2d01.pphosted.com ([148.163.158.5])	by
+ ppma03wdc.us.ibm.com with ESMTP id 2vvds6t00r-1	(version=TLSv1.2
+ cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)	for
+ <erichte@linux.vnet.ibm.com>; Tue, 29 Oct 2019 09:26:35 +0000
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])	by
+ mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x9T9JAqP085276
+ for <erichte@linux.vnet.ibm.com>; Tue, 29 Oct 2019 05:26:35 -0400
+Authentication-Results: ppops.net;	spf=pass
+ smtp.mailfrom=petitboot-bounces+erichte=linux.vnet.ibm.com@lists.ozlabs.org;
+ dkim=fail header.d=ozlabs.org header.s=201707
+Received: from lists.ozlabs.org (lists.ozlabs.org [203.11.71.2])	by
+ mx0b-001b2d01.pphosted.com with ESMTP id 2vxjpk07tg-1	(version=TLSv1.2
+ cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)	for
+ <erichte@linux.vnet.ibm.com>; Tue, 29 Oct 2019 05:26:35 -0400
+Received: from bilbo.ozlabs.org (lists.ozlabs.org [IPv6:2401:3900:2:1::3])	by
+ lists.ozlabs.org (Postfix) with ESMTP id 472R6b6jdrzDr58	for
+ <erichte@linux.vnet.ibm.com>; Tue, 29 Oct 2019 20:26:31 +1100 (AEDT)
+X-Original-To: petitboot@lists.ozlabs.org
+Delivered-To: petitboot@lists.ozlabs.org
+Received: from ozlabs.org (bilbo.ozlabs.org [IPv6:2401:3900:2:1::2]) (using
+ TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits) key-exchange X25519
+ server-signature RSA-PSS (2048 bits) server-digest SHA256) (No client
+ certificate requested) by lists.ozlabs.org (Postfix) with ESMTPS id
+ 472R136BSXzDqwN for <petitboot@lists.ozlabs.org>; Tue, 29 Oct 2019 20:21:43
+ +1100 (AEDT)
+Authentication-Results: lists.ozlabs.org; dmarc=pass (p=none dis=none)
+ header.from=ozlabs.org
+Authentication-Results: lists.ozlabs.org; dkim=pass (2048-bit key; secure)
+ header.d=ozlabs.org header.i=@ozlabs.org header.b="rCD0G/YY";
+ dkim-atps=neutral
+Received: by ozlabs.org (Postfix, from userid 1023) id 472R1256rPz9sPK; Tue,
+ 29 Oct 2019 20:21:42 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ozlabs.org; s=201707;
+ t=1572340902; bh=45OzajebKhRW9UcMK+Ji+B5Qovp2AAv3jxCjJprNky0=;
+ h=From:To:Cc:Subject:Date:From;
+ b=rCD0G/YYjOLH1T20KfvPpVlfHnSUa5wJIUTYWf8LtxIdkHSwyrUCOdmmwKoliqL0x
+ J1vKRhbGIDhLkCdJTP9vFprGjqvD3tRQCt42W9vSUsu+ttkWKgt4ZDxAswASWbpIgj
+ /f8KwJniyihZDV/IkwSVJo4KqzAtTLSrplNy4OIXqR/Q5HeKEZzpPkIfrouVNEWfLB
+ x6yzKDAiE8Xq0Npy1Up+ZhV2CRHKLKVyrTBfpYwdkqq+kRqQK1Ee7UP4upv+I7fa9L
+ y+s4GQrgc4H+PSb6IZ2Luc0SteIj6h6KbXamw8I12dp9wB8T4sgvlJAcdC9xsuZT/u
+ TrO4tGS57ynPQ==
+From: Jeremy Kerr <jk@ozlabs.org>
+To: petitboot@lists.ozlabs.org
+Subject: [PATCH 1/2] discover/boot: add support for `kexec -s` for
+ kexec_file_load
+Date: Tue, 29 Oct 2019 17:15:39 +0800
+Message-Id: <20191029091540.6767-1-jk@ozlabs.org>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+X-BeenThere: petitboot@lists.ozlabs.org
+X-Mailman-Version: 2.1.29
+Precedence: list
+List-Id: Petitboot bootloader development <petitboot.lists.ozlabs.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/petitboot>,
+ <mailto:petitboot-request@lists.ozlabs.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/petitboot/>
+List-Post: <mailto:petitboot@lists.ozlabs.org>
+List-Help: <mailto:petitboot-request@lists.ozlabs.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/petitboot>,
+ <mailto:petitboot-request@lists.ozlabs.org?subject=subscribe>
+Cc: Nayna Jain <nayna@linux.ibm.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: petitboot-bounces+erichte=linux.vnet.ibm.com@lists.ozlabs.org
+Sender: 
+ "Petitboot" <petitboot-bounces+erichte=linux.vnet.ibm.com@lists.ozlabs.org>
+X-CLX-Shades: MLX
+X-CLX-Response: 1TFkXGRgdEQpMehcbGhIRCllEF20aZhl9fRoTE0FFEQpYWBdnX0JgT1BccGR
+ JUhEKeE4Xenl+ZnJAf0xlHHIRCnlMF2x+aVh6R2QdbUdTEQp5QxdhWGNzAQFbRBNyWBEKQ0gXBx
+ saExEKQ1kXBxgaGhEKWU0XZ2ZyEQpZSRcacRoQGncGGRodcRsbHBsQGncGGBoGGhEKWV4XaGN5E
+ QpJRhdDSEd1QkVZXk9OEQpDThcSWU5/aW9ATXhyGW9LehxMUhlmGVNjQW5DUlt+QllPRREKWFwX
+ HwQaBBsSHQcTTBxLHx1JGgUbGgQbGxoEHhIEGxMTEBseGh8aEQpeWRd/HUtaRxEKTVwXHxkcEQp
+ MWhdobU1NXREKTEYXb2Nra01raxEKQk8XaVhFXFpuQ0laHRgRCkNaFxgaGQQbGwQdGwQYEQpCXh
+ cbEQpESRcbEQpCRhdif2FHQH1OTX9nSxEKQkcXbkZGfHkdGX4ZWx8RCkJcFxoRCkJFF2hwAVtAQ
+ hIfaB9PEQpCThd6eX5mckB/TGUcchEKQkwXZ19CYE9QXHBkSVIRCkJsF2gdfURgWG8YfGxnEQpC
+ QBd6XWNiYQFPSWhaYBEKQlgXYh5pbWVgH0dgHxIRClpYFxgRCnBnF2YSYVJhaXgBfnxEEBoRCnB
+ oF2JTQ1JmeWl6T2FtEBoRCnBoF256S2BlQ1hkfWJNEBoRCnBoF2ATRkZgWHx4QkJkEBoRCnBoF2
+ 9SH2ZbZXwbW2ViEBoRCnBoF2teU05MRxlCXmhhEBoRCnB/F2ZGTU5lUkQSUExjEBsaGhEKcF8Xe
+ lpnH00FZEtEUFAQGhEKcH0XbXpQc0JuHmNrHEwQGhEKcGwXY21lfnwTaXMYRh8QHhIRCm1+FxoR
+ ClhNF0sRIA==
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,,
+ definitions=2019-10-29_03:,, signatures=0
+X-Proofpoint-Spam-Details: rule=inbound_notspam policy=inbound score=0
+ priorityscore=108 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
+ spamscore=0 clxscore=327 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910290096
+X-TM-AS-GCONF: 00
+X-Xagent-Gateway: vmsdvm9.vnet.ibm.com (XAGSMTP2 at VMSDVM9)
+
+kexec supports a -s option to perform a kexec_file_load syscall (in
+place of a kexec_load). This is triggered through the -s argument to
+kexec.
+
+This change adds support for calling kexec with -s. If that fails, we
+fall back to -l.
+
+Signed-off-by: Jeremy Kerr <jk@ozlabs.org>
+---
+ discover/boot.c | 73 ++++++++++++++++++++++++++++++++-----------------
+ 1 file changed, 48 insertions(+), 25 deletions(-)
+
+diff --git a/discover/boot.c b/discover/boot.c
+index 91fc46d..a6b88f0 100644
+--- a/discover/boot.c
++++ b/discover/boot.c
+@@ -60,14 +60,16 @@ static void __attribute__((format(__printf__, 4, 5))) update_status(
+  */
+ static int kexec_load(struct boot_task *boot_task)
+ {
++	const char *load_args[] = {"-s", "-l"};
+ 	struct process *process;
+ 	char *s_initrd = NULL;
+ 	char *s_args = NULL;
+ 	const char *argv[8];
+ 	char *s_dtb = NULL;
+ 	const char **p;
++	char *err_buf;
+ 	int result;
+-
++	size_t i;
+
+ 	boot_task->local_initrd_override = NULL;
+ 	boot_task->local_dtb_override = NULL;
+@@ -83,7 +85,8 @@ static int kexec_load(struct boot_task *boot_task)
+ 				" verification failure\n", __func__);
+ 		}
+
+-		goto abort_kexec;
++		validate_boot_files_cleanup(boot_task);
++		return result;
+ 	}
+
+ 	const char* local_initrd = (boot_task->local_initrd_override) ?
+@@ -93,20 +96,10 @@ static int kexec_load(struct boot_task *boot_task)
+ 	const char* local_image = (boot_task->local_image_override) ?
+ 		boot_task->local_image_override : boot_task->local_image;
+
+-	process = process_create(boot_task);
+-	if (!process) {
+-		pb_log_fn("failed to create process\n");
+-		return -1;
+-	}
+-
+-	process->path = pb_system_apps.kexec;
+-	process->argv = argv;
+-	process->keep_stdout = true;
+-	process->add_stderr = true;
+-
++	/* set up process arguments */
+ 	p = argv;
+ 	*p++ = pb_system_apps.kexec;	/* 1 */
+-	*p++ = "-l";			/* 2 */
++	*p++ = NULL;			/* 2; modified below */
+
+ 	if (pb_log_get_debug()) {
+ 		*p++ = "--debug";	/* 3 */
+@@ -134,21 +127,51 @@ static int kexec_load(struct boot_task *boot_task)
+ 	*p++ = local_image;		/* 7 */
+ 	*p++ = NULL;			/* 8 */
+
+-	result = process_run_sync(process);
+-	if (result) {
+-		pb_log_fn("failed to run process\n");
+-		goto abort_kexec;
+-	}
++	err_buf = NULL;
+
+-	result = process->exit_status;
++	for (i = 0; i < ARRAY_SIZE(load_args); i++) {
++		/* our first argument is the action: -s or -l */
++		argv[1] = load_args[i];
+
+-	if (result) {
+-		pb_log_fn("failed: (%d)\n", result);
+-		update_status(boot_task->status_fn, boot_task->status_arg,
+-				STATUS_ERROR, "%s", process->stdout_buf);
++		process = process_create(boot_task);
++		if (!process) {
++			result = -1;
++			pb_log_fn("failed to create process\n");
++			continue;
++		}
++
++		process->path = pb_system_apps.kexec;
++		process->argv = argv;
++		process->keep_stdout = true;
++		process->add_stderr = true;
++
++		result = process_run_sync(process);
++		if (result) {
++			pb_log_fn("failed to run process\n");
++			continue;
++		}
++
++		if (process_exit_ok(process))
++			break;
++
++		result = -1;
++
++		if (process->stdout_len)
++			err_buf = talloc_strndup(boot_task, process->stdout_buf,
++					process->stdout_len);
++
++		pb_log_fn("kexec load (%s) failed (rc %d): %s\n", argv[1],
++				WEXITSTATUS(process->exit_status),
++				err_buf ?: "");
++
++		process_release(process);
+ 	}
+
+-abort_kexec:
++	if (result)
++		update_status(boot_task->status_fn, boot_task->status_arg,
++				STATUS_ERROR, _("kexec load failed: %s"),
++				err_buf ?: "(no output)");
++
+ 	validate_boot_files_cleanup(boot_task);
+
+ 	return result;
+-- 
+2.20.1
+
+_______________________________________________
+Petitboot mailing list
+Petitboot@lists.ozlabs.org
+https://lists.ozlabs.org/listinfo/petitboot
