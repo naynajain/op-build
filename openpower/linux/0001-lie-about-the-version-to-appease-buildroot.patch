@@ -8,17 +8,17 @@ Subject: [PATCH] lie about the version to appease buildroot
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/Makefile b/Makefile
-index fa0fbe7851ea..d79245cc765b 100644
+index f47dfdec7086..8d4d92ee66d5 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -1,6 +1,6 @@
  # SPDX-License-Identifier: GPL-2.0
  VERSION = 5
--PATCHLEVEL = 3
-+PATCHLEVEL = 2
+-PATCHLEVEL = 4
++PATCHLEVEL = 3
  SUBLEVEL = 0
  EXTRAVERSION = -rc2
- NAME = Bobtail Squid
+ NAME = Nesting Opossum
 -- 
 2.20.1
 
