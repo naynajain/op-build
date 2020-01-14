@@ -1,0 +1,78 @@
+From 20c3cccc7976c106904928342256a64352f4f8b8 Mon Sep 17 00:00:00 2001
+From: Jeremy Kerr <jk@ozlabs.org>
+Date: Wed, 20 Nov 2019 13:09:41 +0800
+Subject: [PATCH 5/9] protocol,types: Add secure & trusted boot state to system
+ info
+
+Add state of secure & trusted boot to struct system_info:
+
+ - fw_measurement: whether the firmware has been measured
+ - fw_enforcing: whether the firmware has been authenticated
+ - os_enforcing: whether the boot payload will be authenticated
+
+Signed-off-by: Jeremy Kerr <jk@ozlabs.org>
+---
+ lib/pb-protocol/pb-protocol.c | 18 ++++++++++++++++++
+ lib/types/types.h             |  3 +++
+ 2 files changed, 21 insertions(+)
+
+diff --git a/lib/pb-protocol/pb-protocol.c b/lib/pb-protocol/pb-protocol.c
+index e0cef36..06c81f2 100644
+--- a/lib/pb-protocol/pb-protocol.c
++++ b/lib/pb-protocol/pb-protocol.c
+@@ -272,6 +272,9 @@ int pb_protocol_system_info_len(const struct system_info *sysinfo)
+ 			4 + optional_strlen(bd_info->mountpoint);
+ 	}
+ 
++	/* stb info */
++	len += 3 * sizeof(bool);
++
+ 	return len;
+ }
+ 
+@@ -560,6 +563,13 @@ int pb_protocol_serialise_system_info(const struct system_info *sysinfo,
+ 		memset(pos, 0, HWADDR_SIZE);
+ 	pos += HWADDR_SIZE;
+ 
++	*(bool *)pos = sysinfo->stb_fw_measurement;
++	pos += sizeof(bool);
++	*(bool *)pos = sysinfo->stb_fw_enforcing;
++	pos += sizeof(bool);
++	*(bool *)pos = sysinfo->stb_os_enforcing;
++	pos += sizeof(bool);
++
+ 	assert(pos <= buf + buf_len);
+ 
+ 	return (pos <= buf + buf_len) ? 0 : -1;
+@@ -1160,6 +1170,14 @@ int pb_protocol_deserialise_system_info(struct system_info *sysinfo,
+ 	pos += HWADDR_SIZE;
+ 	len -= HWADDR_SIZE;
+ 
++	sysinfo->stb_fw_measurement = !!*pos;
++	pos += sizeof(bool);
++	sysinfo->stb_fw_enforcing = !!*pos;
++	pos += sizeof(bool);
++	sysinfo->stb_os_enforcing = !!*pos;
++	pos += sizeof(bool);
++	len -= 3 * sizeof(bool);
++
+ 	rc = 0;
+ out:
+ 	return rc;
+diff --git a/lib/types/types.h b/lib/types/types.h
+index 22fa337..c923d93 100644
+--- a/lib/types/types.h
++++ b/lib/types/types.h
+@@ -138,6 +138,9 @@ struct system_info {
+ 	struct blockdev_info	**blockdevs;
+ 	unsigned int		n_blockdevs;
+ 	uint8_t			*bmc_mac;
++	bool			stb_fw_measurement;
++	bool			stb_fw_enforcing;
++	bool			stb_os_enforcing;
+ };
+ 
+ #define HWADDR_SIZE	6
+-- 
+2.17.1
+

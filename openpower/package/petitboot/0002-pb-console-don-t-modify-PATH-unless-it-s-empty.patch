@@ -1,0 +1,36 @@
+From 6f23e17e3203cd8cc064f83d7b8398f61dad42bb Mon Sep 17 00:00:00 2001
+From: Jeremy Kerr <jk@ozlabs.org>
+Date: Thu, 15 Aug 2019 15:10:54 +0800
+Subject: [PATCH 2/9] pb-console: don't modify PATH unless it's empty
+
+We're now running pb-console through a proper login shell, so we
+shouldn't need to modify PATH, as we expect it to be properly set up by
+the shell profile.
+
+This change removes the unconditional PATH modification, so we only set
+a basic PATH if it's currently empty.
+
+Signed-off-by: Jeremy Kerr <jk@ozlabs.org>
+---
+ utils/pb-console | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/utils/pb-console b/utils/pb-console
+index 8245b33..012d242 100644
+--- a/utils/pb-console
++++ b/utils/pb-console
+@@ -119,10 +119,8 @@ esac
+ # we may have been run from udev - ensure we have a sensible PATH
+ if [ -z "$PATH" ]
+ then
+-	PATH=/usr/bin:/usr/sbin:/bin:/sbin
++	export PATH=/usr/bin:/usr/sbin:/bin:/sbin
+ fi
+-PATH=/var/lib/pb-plugins/bin:$PATH
+-export PATH
+ 
+ verbose_opt=
+ if $pb_config debug | grep -q enabled
+-- 
+2.17.1
+

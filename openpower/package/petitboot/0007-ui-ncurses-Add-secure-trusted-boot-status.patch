@@ -1,0 +1,33 @@
+From 70aacd123075edd2b53bd3ff356fe6a57e09b286 Mon Sep 17 00:00:00 2001
+From: Jeremy Kerr <jk@ozlabs.org>
+Date: Thu, 21 Nov 2019 15:27:16 +0800
+Subject: [PATCH 7/9] ui/ncurses: Add secure & trusted boot status
+
+Signed-off-by: Jeremy Kerr <jk@ozlabs.org>
+---
+ ui/ncurses/nc-sysinfo.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/ui/ncurses/nc-sysinfo.c b/ui/ncurses/nc-sysinfo.c
+index 756f15d..9ca15ff 100644
+--- a/ui/ncurses/nc-sysinfo.c
++++ b/ui/ncurses/nc-sysinfo.c
+@@ -81,6 +81,15 @@ static void sysinfo_screen_populate(struct sysinfo_screen *screen,
+ 		}
+ 	}
+ 
++	line(NULL);
++	line("%s", _("Secure & trusted boot"));
++	line(" %-15s: %s", _("FW verification"), sysinfo->stb_fw_enforcing ?
++				_("enabled") : _("disabled"));
++	line(" %-15s: %s", _("FW measurement"), sysinfo->stb_fw_measurement ?
++				_("enabled") : _("disabled"));
++	line(" %-15s: %s", _("OS verification"), sysinfo->stb_os_enforcing ?
++				_("enforcing") : _("disabled"));
++
+ 	if (sysinfo->n_bmc_current) {
+ 		line(NULL);
+ 		line("%s", _("BMC current side:"));
+-- 
+2.17.1
+

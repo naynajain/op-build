@@ -1,0 +1,40 @@
+From b964da8b8deb2463ffbc056adf047a6c4abdbce2 Mon Sep 17 00:00:00 2001
+From: Jeremy Kerr <jk@ozlabs.org>
+Date: Wed, 20 Nov 2019 12:20:43 +0800
+Subject: [PATCH 3/9] lib/pb-protocol: fix ordering of system info length
+ calculation
+
+... to match the definition of struct system_info.
+
+Signed-off-by: Jeremy Kerr <jk@ozlabs.org>
+---
+ lib/pb-protocol/pb-protocol.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/lib/pb-protocol/pb-protocol.c b/lib/pb-protocol/pb-protocol.c
+index daf4ec9..e0cef36 100644
+--- a/lib/pb-protocol/pb-protocol.c
++++ b/lib/pb-protocol/pb-protocol.c
+@@ -253,6 +253,9 @@ int pb_protocol_system_info_len(const struct system_info *sysinfo)
+ 	for (i = 0; i < sysinfo->n_bmc_golden; i++)
+ 		len += 4 + optional_strlen(sysinfo->bmc_golden[i]);
+ 
++	/* BMC MAC */
++	len += HWADDR_SIZE;
++
+ 	for (i = 0; i < sysinfo->n_interfaces; i++) {
+ 		struct interface_info *if_info = sysinfo->interfaces[i];
+ 		len +=	4 + if_info->hwaddr_size +
+@@ -269,9 +272,6 @@ int pb_protocol_system_info_len(const struct system_info *sysinfo)
+ 			4 + optional_strlen(bd_info->mountpoint);
+ 	}
+ 
+-	/* BMC MAC */
+-	len += HWADDR_SIZE;
+-
+ 	return len;
+ }
+ 
+-- 
+2.17.1
+
