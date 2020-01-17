@@ -1,0 +1,40 @@
+From e8c862447330c33b167074ebf2abfcd3863d1d3c Mon Sep 17 00:00:00 2001
+From: Jeremy Kerr <jk@ozlabs.org>
+Date: Tue, 3 Dec 2019 08:50:28 +0800
+Subject: [PATCH 09/10] kexec: don't ignore kexec_file_load syscall failures
+
+Currently, a failure from the kexec_file_load syscall will print an
+error message, but the kexec process will still report a successful exit
+status. This means that callers of kexec cannot fail gracefully on
+signature verification errors.
+
+This change adds an early exit (with non-zero exit status) on failure,
+in a similar manner to the existing kexec_load error paths.
+
+Signed-off-by: Jeremy Kerr <jk@ozlabs.org>
+Fixes: 106891319 (Add support for kexec_file_load)
+Cc: Nayna Jain <naynjain@ibm.com>
+Cc: Eric Richter <erichte@linux.ibm.com>
+---
+ kexec.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/kexec.c b/kexec.c
+index 0f29e05..04cb0cf 100644
+--- a/kexec.c
++++ b/kexec.c
+@@ -822,8 +822,10 @@ static void do_file_load(char *kernel, char *initrd, char *cmdline)
+ 			kernel_fd, initrd_fd, cmdline_len, flags);
+ 	debug_printf("cmdline=\"%s\"\n", cmdline);
+ 	ret = syscall_kexec_file_load(kernel_fd, initrd_fd, cmdline_len, cmdline, flags);
+-	if (ret)
++	if (ret) {
+ 		fprintf(stderr, "do_file_load: (%d) %s\n", ret, strerror(errno));
++		exit(1);
++	}
+ }
+ 
+ 
+-- 
+2.17.1
+

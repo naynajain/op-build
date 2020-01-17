@@ -1,0 +1,56 @@
+From 666c8464fd8e0ab2bc6f80aed393c97445b9a479 Mon Sep 17 00:00:00 2001
+From: Brandon Bergren <git@bdragon.rtk0.net>
+Date: Mon, 15 Oct 2018 13:47:13 -0500
+Subject: [PATCH 05/10] Fix loading FreeBSD kernels with multiple PT_LOAD
+ sections.
+
+Fix calculation of ELFv2 entry point.
+---
+ kexec.c | 29 +++++++++++++++++++----------
+ 1 file changed, 19 insertions(+), 10 deletions(-)
+
+diff --git a/kexec.c b/kexec.c
+index 2445afb..892d682 100644
+--- a/kexec.c
++++ b/kexec.c
+@@ -280,18 +280,27 @@ static void load_kernel(char *image)
+ 
+ 			memsize = ALIGN_UP(memsize, PAGE_SIZE_64K);
+ 
+-			add_kexec_segment("kernel", p, size,
+-					  (void *)(dest + paddr - start),
+-					  memsize);
+-
+-			/* Parse function descriptor for ELFv1 kernels */
+-			if ((ehdr.e_flags & 3) == 2)
+-				kernel_entry = ehdr.e_entry;
++			if ((phdr.p_flags & PF_X) == PF_X) {
++
++				add_kexec_segment("kernel", p, size,
++						  (void *)(dest + paddr - start),
++						  memsize);
++
++				/* Parse function descriptor for ELFv1 kernels */
++				if ((ehdr.e_flags & 3) == 2)
++					kernel_entry = ehdr.e_entry - phdr.p_vaddr;
++				else {
++					kernel_entry = get_entry_addr(e, ehdr, ehdr.e_entry) - phdr.p_vaddr;
++					debug_printf("Kernel entry: 0x%lx\n", kernel_entry);
++				}
++				kernel_addr += kernel_entry;
++			}
+ 			else {
+-				kernel_entry = get_entry_addr(e, ehdr, ehdr.e_entry) - phdr.p_vaddr;
+-				debug_printf("Kernel entry: 0x%lx\n", kernel_entry);
++				/* Extra non-executable segment. */
++				add_kexec_segment("data", p, size,
++						  (void *)(dest + paddr - start),
++						  memsize);
+ 			}
+-			kernel_addr += kernel_entry;
+ 		}
+ 	}
+ 
+-- 
+2.17.1
+

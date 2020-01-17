@@ -1,0 +1,53 @@
+From 4e3d5b1f17953ad9d1d7c45857dbccce72fca069 Mon Sep 17 00:00:00 2001
+From: Alexey Kardashevskiy <aik@ozlabs.ru>
+Date: Mon, 22 Jul 2019 12:52:33 +1000
+Subject: [PATCH 08/10] memory_map: Allow RTAS-less setup
+
+There is an attempt to get rid of the RTAS blob in some configurations
+(secure VMs is one example), this means absence of the "linux,rtas-base"
+and "rtas-size" properties. However kexec checks for these and refuses
+to continue.
+
+This relaxed the checks and allows booting to the new kernel.
+
+Signed-off-by: Alexey Kardashevskiy <aik@ozlabs.ru>
+---
+ kexec_memory_map.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/kexec_memory_map.c b/kexec_memory_map.c
+index 40d0ea0..7c5daf8 100644
+--- a/kexec_memory_map.c
++++ b/kexec_memory_map.c
+@@ -267,22 +267,22 @@ void kexec_memory_map(void *fdt, int reserve_initrd)
+ 	/* Reserve RTAS */
+ 	nodeoffset = fdt_path_offset(fdt, "/rtas");
+ 	if (nodeoffset > 0) {
+-		uint32_t rtas_start, rtas_size;
++		uint32_t rtas_start = 0, rtas_size = 0;
+ 
+ 		if (getprop_u32(fdt, nodeoffset, "linux,rtas-base", &rtas_start)) {
+ 			fprintf(stderr, "getprop linux,rtas-base failed\n");
+-			exit(1);
+ 		}
+ 
+ 		if (getprop_u32(fdt, nodeoffset, "rtas-size", &rtas_size)) {
+ 			fprintf(stderr, "getprop rtas-size failed\n");
+-			exit(1);
+ 		}
+ 
+-		simple_alloc_at(kexec_map, rtas_start, rtas_size);
++		if (rtas_start && rtas_size) {
++			simple_alloc_at(kexec_map, rtas_start, rtas_size);
+ 
+-		if (fdt_add_mem_rsv(fdt, rtas_start, rtas_size))
+-			perror("fdt_add_mem_rsv");
++			if (fdt_add_mem_rsv(fdt, rtas_start, rtas_size))
++				perror("fdt_add_mem_rsv");
++		}
+ 	}
+ 
+ 	nodeoffset = fdt_path_offset(fdt, "/ibm,opal");
+-- 
+2.17.1
+
